@@ -122,7 +122,7 @@
             <div class="task">
                 <span>{{Tasks[i][0]}}</span>
                 <div class="task-buttons">
-                    <button class="btn-complete">Mark as Done</button>
+                    <button class="btn-complete" onclick="location.assign('/checkTask?id=' + {{Tasks[i][2]}})">Mark as Done</button>
                     <button class="btn-edit">Edit</button>
                     <button class="btn-delete" onclick="location.assign('/deleteTask?id=' + {{Tasks[i][2]}})">Delete</button>
                 </div>

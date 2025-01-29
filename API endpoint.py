@@ -51,11 +51,22 @@ def PersonnalPage():
 
 @app.route("/createTask", methods=["POST"])
 def AddTask():
-    name = request.form["name"]
-    description= request.form["description"]
-    cur.execute("INSERT INTO tasks (user_id, description, name) VALUES (?,?,?)", (session["id"], description, name,))
-    db.commit()
+    if(Authenticate()):
+        name = request.form["name"]
+        description= request.form["description"]
+        cur.execute("INSERT INTO tasks (user_id, description, name) VALUES (?,?,?)", (session["id"], description, name,))
+        db.commit()
     return redirect("/home")
+
+@app.route("/checkTask", methods=["POST"])
+def CheckTask():
+    TaskIDToCheck = request.args.get('id')
+    if(Authenticate()):
+        CheckVar = cur.execute("SELECT user_id FROM tasks WHERE id=?", (TaskIDToCheck,)).fetchone()
+        if CheckVar and CheckVar[0] == session["id"]:
+            cur.execute("UPDATE tasks SET done = TRUE WHERE id=?", (TaskIDToCheck,))
+    return redirect("/home")
+
 
 @app.route("/createTask", methods=["GET"])
 def RerouteToHome():
