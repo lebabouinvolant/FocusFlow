@@ -54,17 +54,19 @@ def AddTask():
     if(Authenticate()):
         name = request.form["name"]
         description= request.form["description"]
-        cur.execute("INSERT INTO tasks (user_id, description, name) VALUES (?,?,?)", (session["id"], description, name,))
+        cur.execute("INSERT INTO tasks (user_id, description, name, done) VALUES (?,?,?,?)", (session["id"], description, name, False,))
         db.commit()
     return redirect("/home")
 
-@app.route("/checkTask", methods=["POST"])
+@app.route("/checkTask", methods=["GET"])
 def CheckTask():
     TaskIDToCheck = request.args.get('id')
     if(Authenticate()):
         CheckVar = cur.execute("SELECT user_id FROM tasks WHERE id=?", (TaskIDToCheck,)).fetchone()
+        
         if CheckVar and CheckVar[0] == session["id"]:
-            cur.execute("UPDATE tasks SET done = TRUE WHERE id=?", (TaskIDToCheck,))
+            cur.execute("UPDATE tasks SET done = ? WHERE id=?", (request.args.get('state'), TaskIDToCheck,))
+            db.commit()
     return redirect("/home")
 
 
@@ -79,6 +81,7 @@ def DeleteTask():
         CheckVar = cur.execute("SELECT user_id FROM tasks WHERE id=?", (TaskIDToDelete,)).fetchone()
         if CheckVar and CheckVar[0] == session["id"]:
             cur.execute("DELETE FROM tasks WHERE id=?", (TaskIDToDelete,))
+            db.commit()
     return redirect("/home")
 
 
@@ -92,7 +95,7 @@ def GetInfos(info): #Always call after authenticate
 
 
 def GetTasks():
-    return cur.execute("SELECT name, description, id FROM tasks WHERE user_id = ?", (session["id"],)).fetchall()
+    return cur.execute("SELECT name, description, id, done FROM tasks WHERE user_id = ?", (session["id"],)).fetchall()
 
 @app.route('/')
 def home():

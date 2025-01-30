@@ -120,9 +120,17 @@
         <div class="task-list">
             {% for i in range(0, Tasks|length) %}
             <div class="task">
-                <span>{{Tasks[i][0]}}</span>
+                {% if Tasks[i][3] == 0 %}
+                    <span>{{Tasks[i][0]}}</span>
+                {% else %}
+                    <s>{{Tasks[i][0]}}</s>
+                {% endif %}
                 <div class="task-buttons">
-                    <button class="btn-complete" onclick="location.assign('/checkTask?id=' + {{Tasks[i][2]}})">Mark as Done</button>
+                    {% if Tasks[i][3] == 0 %}
+                        <button class="btn-complete" onclick="location.assign('/checkTask?state=1&id=' + {{Tasks[i][2]}})">Mark as Done</button>
+                    {% else %}
+                        <button class="btn-complete" onclick="location.assign('/checkTask?state=0&id=' + {{Tasks[i][2]}})">Unmark as Done</button>
+                    {% endif %}
                     <button class="btn-edit">Edit</button>
                     <button class="btn-delete" onclick="location.assign('/deleteTask?id=' + {{Tasks[i][2]}})">Delete</button>
                 </div>
