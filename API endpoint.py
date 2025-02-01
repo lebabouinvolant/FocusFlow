@@ -90,6 +90,8 @@ def Authenticate():
         return True
     else:
         return False
+
+
 def GetInfos(info): #Always call after authenticate
     return cur.execute(f"SELECT {info} FROM users WHERE id = ?", (session["id"],)).fetchone()[0]
 
